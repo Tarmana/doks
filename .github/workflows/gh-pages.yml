@@ -1,51 +1,33 @@
-name: github pages
+# Deploy your Hyas site to GitHub Pages
+
+name: GitHub Pages
 
 on:
   push:
     branches:
-      - dev
+      - master
 
 jobs:
   deploy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          ref: dev
-          token: ${{ secrets.ACCESS_TOKEN }}
-          ssh-key: ${{ secrets.SSH_PRIVATE }}
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+          node-version: '16'
+          cache: 'npm'
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: '0.80.0'
-          extended: true
+      - name: Install dependencies
+        run: npm install
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
+      - name: Check for linting errors
+        run: npm test
 
-      - name: Composite package.json
-        run: hugo -s exampleSite --themesDir=../.. mod npm pack
+      - name: Build production website
+        run: npm run build
 
-      - name: Setup Dependency
-        run: npm install --prefix exampleSite
-
-      - name: Setup public
-        run: git worktree add -B gh-pages ./exampleSite/public origin/gh-pages
-
-      - name: Clean public
-        run: rm -rf ./exampleSite/public/*
-
-      - name: Build
-        run: hugo -s exampleSite --themesDir=../.. --minify --environment production -b https://kaiiiz.github.io/hugo-theme-monochrome
-
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          deploy_key: ${{ secrets.SSH_PRIVATE }}
-          publish_dir: ./exampleSite/public
-          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
