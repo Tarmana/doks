@@ -1,5 +1,5 @@
-baseurl = "https://doks.netlify.app/"
-canonifyURLs = false
+baseurl = "https://tarmana.github.io/doks/"
+canonifyURLs = true
 disableAliases = true
 disableHugoGeneratorInject = true
 enableEmoji = true
