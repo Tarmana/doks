@@ -1,2 +1,2 @@
-baseurl = https://tarmana.github.io/doks/
+baseurl = "/" 
 canonifyURLs = true
